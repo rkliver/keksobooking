@@ -1,33 +1,5 @@
-import {ADS_NEARBY_COUNT, TITLES, TYPES, CHECKINS, CHECKOUTS, FEATURES, DESCRIPTIONS, PHOTOS, avatarParths} from './data.js';
-//Функция, возвращающая случайное целое число из переданного диапазона включительно. //
-const getRandomInt = (min,max) => {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  if (min < 0 || max < 0){
-    return -1;
-  }
-  if (max < min){
-    [min, max] = [max, min];
-  }
-  return Math.floor(Math.random() * (max - min + 1) + min);
-};
-
-//Функция, возвращающая случайное число с плавающей точкой из переданного диапазона включительно.//
-const getRandonFloat = (min, max, decimals) => {
-  if (min < 0 || max < 0){
-    return -1;
-  }
-  if (max < min){
-    [min, max] = [max, min];
-  }
-  const i = (Math.random() * (max - min) + min).toFixed(decimals)
-  return Number(i);
-};
-
-//Функция, возвращающая случайный элемент массива.//
-const getRandomArrayElement = (elements) => {
-  return elements[getRandomInt(0, elements.length - 1)];
-};
+import {ADS_NEARBY_COUNT, TITLES, TYPES, CHECKINS, CHECKOUTS, FEATURES, DESCRIPTIONS, PHOTOS} from './data.js';
+import {getRandomInt, getRandonFloat, getRandomArrayElement} from './util.js';
 
 //создает массив строк "photos"//
 const getPhotos = () => {
@@ -35,7 +7,9 @@ const getPhotos = () => {
   for (let i = 0; i < getRandomInt(1,ADS_NEARBY_COUNT); i ++) {
     photos.push(getRandomArrayElement(PHOTOS));
   }
-  return photos;
+  const uniquePhotos = photos.filter((photo, index) => {
+    return photos.indexOf(photo) == index;})
+  return uniquePhotos;
 };
 
 //создает массив строк "features"//
@@ -49,6 +23,18 @@ const getFeatures = () => {
   });
   return uniqueFeatures;
 };
+
+
+//Массив "ссылок" на avatar//
+let avatarParths = [];
+for (let i = 0; i < ADS_NEARBY_COUNT; i ++) {
+  if (i < ADS_NEARBY_COUNT - 1){
+    avatarParths[i] ='img/avatars/user' + '0' + (i +1) + '.png';
+  } else {
+    avatarParths[i] = 'img/avatars/user10.png';
+  }
+}
+
 
 //Создаёт "Объявление неподалёку"//
 const createAdNearby = () => {

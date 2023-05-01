@@ -49,14 +49,4 @@ const PHOTOS = [
   'http://o0.github.io/assets/images/tokyo/hotel3.jpg',
 ];
 
-//массив "ссылок" на avatar//
-let avatarParths = [];
-for (let i = 0; i < ADS_NEARBY_COUNT; i ++) {
-  if (i < ADS_NEARBY_COUNT - 1){
-    avatarParths[i] ='img/avatars/user' + '0' + (i +1) + '.png';
-  } else {
-    avatarParths[i] = 'img/avatars/user10.png';
-  }
-}
-
-export {ADS_NEARBY_COUNT, TITLES, TYPES, CHECKINS, CHECKOUTS, FEATURES, DESCRIPTIONS, PHOTOS, avatarParths};
+export {ADS_NEARBY_COUNT, TITLES, TYPES, CHECKINS, CHECKOUTS, FEATURES, DESCRIPTIONS, PHOTOS};

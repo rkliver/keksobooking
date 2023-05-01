@@ -1,2 +1,1 @@
-import {AdsNearby} from './functions.js';
-console.log(AdsNearby)
+import './popup-nearby.js';
