@@ -1,5 +1,4 @@
 import {AdsNearby} from './data-nearby.js';
-const mapCanva = document.querySelector('#map-canvas');
 const adsNearbyList = document.createDocumentFragment();
 const AdsNearbyTemplate = document.querySelector('#card').content.querySelector('.popup');
 
@@ -54,7 +53,12 @@ AdsNearby.forEach((adNearby) => {
 
   adsNearbyListElement.querySelector('.popup__avatar').src = adNearby.author.avatar;
 
-  adsNearbyList.appendChild(adsNearbyListElement);
+  for (let i = 1; i < adsNearbyListElement.children.length; i++){
+    if (adsNearbyListElement.children[i].textContent === ''){
+      adsNearbyListElement.children[i].classList.add('hidden');
+    }
+  }
 
+  adsNearbyList.appendChild(adsNearbyListElement);
 })
-mapCanva.appendChild(adsNearbyList.firstChild);
+export {adsNearbyList};
