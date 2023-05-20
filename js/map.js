@@ -1,8 +1,13 @@
-import {AdsNearby} from './data-nearby.js';
+import {AdsNearby} from './popup-nearby.js';
 import {adsNearbyList} from './popup-nearby.js'
+
 /* global L:readonly */
+
+const MAX_MARKERS_COUNT = 10;
+
 const adForm = document.querySelector('.ad-form');
 const mapFilter = document.querySelector('.map__filters');
+
 //Функция переводит страницу в нактивное состояние
 const inactivateState = (boolean) => {
   if (boolean !== true) {
@@ -35,8 +40,10 @@ L.tileLayer(
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
 ).addTo(map);
+
 //Активируем форму
 inactivateState(mapIsInit);
+
 //Добавляем главную метку
 const mainMarkerIcon = L.icon({
   iconUrl: '/leaflet/img/main-pin.svg',
@@ -62,16 +69,17 @@ mainMarker.on('moveend', (evt) => {
   const address = adForm.querySelector('#address');
   address.value = `${x.toFixed(5)}, ${y.toFixed(5)}`;
 });
+
 // Добавляем метки "похожих объявлений"
 const nearbyMarkerIcon = L.icon({
   iconUrl: '/leaflet/img/pin.svg',
   iconSize: [40, 40],
   iconAnchor: [52, 52],
 });
-for (let i = 0; i < adsNearbyList.children.length; i++ ){
+for (let i = 0; i < MAX_MARKERS_COUNT; i++ ){
   const marker = L.marker({
-    lat: AdsNearby[i].location.x,
-    lng: AdsNearby[i].location.y,
+    lat: AdsNearby[i].location.lat,
+    lng: AdsNearby[i].location.lng,
   },
   {
     icon: nearbyMarkerIcon,

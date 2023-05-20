@@ -1,9 +1,19 @@
-import {AdsNearby} from './data-nearby.js';
+//получаем массив похожих объявлений с сервера
+const AdsNearby = await fetch('https://26.javascript.pages.academy/keksobooking/data')
+  .then((response) => {
+    if (response.ok) {
+      return response.json();
+    }else {
+      alert('Ошибка HTTP: ' + response.status);
+    }
+
+  })
+console.log(AdsNearby);
+//передаем данные AdsNearby, полученные от сервера, в попап "похожие объявления"
 const adsNearbyList = document.createDocumentFragment();
 const AdsNearbyTemplate = document.querySelector('#card').content.querySelector('.popup');
 
 AdsNearby.forEach((adNearby) => {
-
   const adsNearbyListElement = AdsNearbyTemplate.cloneNode(true);
 
   adsNearbyListElement.querySelector('.popup__title').textContent = adNearby.offer.title;
@@ -31,25 +41,27 @@ AdsNearby.forEach((adNearby) => {
   adsNearbyListElement.querySelector('.popup__text--time').textContent = 'Заезд после ' + adNearby.offer.checkin + ', выезд до ' + adNearby.offer.checkout;
 
   adsNearbyListElement.querySelector('.popup__features').querySelectorAll('.popup__feature').forEach((element) => {element.remove()});
-
-  for (let i = 0; i < adNearby.offer.features.length; i++){
-    let featureOne = document.createElement('li');
-    featureOne.textContent = adNearby.offer.features[i];
-    featureOne.classList.add('popup__feature','popup__feature--' + adNearby.offer.features[i]);
-    adsNearbyListElement.querySelector('.popup__features').appendChild(featureOne);}
+  if (adNearby.offer.features !== undefined){
+    for (let i = 0; i < adNearby.offer.features.length; i++){
+      let featureOne = document.createElement('li');
+      featureOne.textContent = adNearby.offer.features[i];
+      featureOne.classList.add('popup__feature','popup__feature--' + adNearby.offer.features[i]);
+      adsNearbyListElement.querySelector('.popup__features').appendChild(featureOne);}
+  }
 
   adsNearbyListElement.querySelector('.popup__description').textContent = adNearby.offer.description;
 
   adsNearbyListElement.querySelector('.popup__photos').querySelectorAll('.popup__photo').forEach((element) => {element.remove()});
-
-  for (let i = 0; i < adNearby.offer.photos.length; i++){
-    let photoOne = document.createElement('img');
-    photoOne.src = adNearby.offer.photos[i];
-    photoOne.classList.add('popup__photo');
-    photoOne.width = '45';
-    photoOne.height = '40';
-    photoOne.alt = 'Фотография жилья';
-    adsNearbyListElement.querySelector('.popup__photos').appendChild(photoOne);}
+  if (adNearby.offer.photos !== undefined){
+    for (let i = 0; i < adNearby.offer.photos.length; i++){
+      let photoOne = document.createElement('img');
+      photoOne.src = adNearby.offer.photos[i];
+      photoOne.classList.add('popup__photo');
+      photoOne.width = '45';
+      photoOne.height = '40';
+      photoOne.alt = 'Фотография жилья';
+      adsNearbyListElement.querySelector('.popup__photos').appendChild(photoOne);}
+  }
 
   adsNearbyListElement.querySelector('.popup__avatar').src = adNearby.author.avatar;
 
@@ -61,4 +73,6 @@ AdsNearby.forEach((adNearby) => {
 
   adsNearbyList.appendChild(adsNearbyListElement);
 })
+
 export {adsNearbyList};
+export {AdsNearby};
