@@ -1,10 +1,9 @@
 const adsNearbyList = document.createDocumentFragment();
-const adsNearbyTemplate = document.querySelector('#card').content.querySelector('.popup');
+const AdsNearbyTemplate = document.querySelector('#card').content.querySelector('.popup');
 
-//функция принимает массив с обьявлениями и передает данные в popup, вовзращает document fragment с popups
-const popupBuilder = (adsNearby) => {
-  adsNearby.forEach((adNearby) => {
-    const adsNearbyListElement = adsNearbyTemplate.cloneNode(true);
+const createPopup = (AdsNearby) => {
+  AdsNearby.forEach((adNearby) => {
+    const adsNearbyListElement = AdsNearbyTemplate.cloneNode(true);
 
     adsNearbyListElement.querySelector('.popup__title').textContent = adNearby.offer.title;
 
@@ -63,8 +62,6 @@ const popupBuilder = (adsNearby) => {
 
     adsNearbyList.appendChild(adsNearbyListElement);
   })
-
   return adsNearbyList;
-};
-
-export {popupBuilder};
+}
+export {createPopup};

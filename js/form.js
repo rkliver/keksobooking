@@ -1,3 +1,6 @@
+import {sendData} from './create-fetch.js';
+import {mainMarker} from './map.js';
+
 const form = document.querySelector('.ad-form');
 const title = form.querySelector('#title');
 const type = form.querySelector('#type');
@@ -8,12 +11,25 @@ const timeIn = form.querySelector('#timein');
 const timeOut = form.querySelector('#timeout');
 const roomNumber = form.querySelector('#room_number');
 const capacity = form.querySelector('#capacity');
+const adFormReset = form.querySelector('.ad-form__reset');
+
+const successMessageTemplate = document.querySelector('#success').content;
+const successMessage = successMessageTemplate.cloneNode(true);
+const errorMessageTemplate = document.querySelector('#error').content;
+const errorMessage = errorMessageTemplate.cloneNode(true);
+
+form.appendChild(errorMessage);
+form.querySelector('.error').classList.add('hidden');
+
+form.appendChild(successMessage);
+form.querySelector('.success').classList.add('hidden');
 
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE = 1000000;
 //Добавляем тип жилья "Отель"
 const hotelOption = type.options[0].cloneNode(true);
+hotelOption.removeAttribute('selected');
 hotelOption.innerText = 'Отель';
 hotelOption.value = 'hotel';
 type.insertBefore(hotelOption, type.options[2]);
@@ -65,6 +81,15 @@ const minPriceChanger = (min) =>{
   price.setAttribute('min', min);
   return price;
 }
+//Меняет время въезда
+const timeInChanger = (time) =>{
+  for (let i = 0; i < timeIn.options.length; i ++) {
+    if (timeIn.options[i].value == time){
+      timeIn.options[i].selected = true;
+    }
+  }
+  return timeIn
+}
 //Меняет время выезда
 const timeOutChanger = (time) =>{
   for (let i = 0; i < timeOut.options.length; i ++) {
@@ -98,8 +123,69 @@ type.addEventListener('input', () => {
   return minPriceChanger(min);
 },
 )
-//При изменении пользователем времени заезда вызывает timeOutChanger и передает в него соответсвущее значение
+//При изменении пользователем времени заезда вызывает timeOutChanger и передает в него соответсвущее значение и наоборот
 timeIn.addEventListener('input', () => {
   let time = timeIn.selectedOptions[0].value;
   return timeOutChanger(time)
+})
+timeOut.addEventListener('input', () => {
+  let time = timeOut.selectedOptions[0].value;
+  return timeInChanger(time)
+})
+
+const classListToggler = (selector, className) =>{
+  form.querySelector(`.${selector}`).classList.toggle(`${className}`);
+};
+
+form.addEventListener('submit', (evt) => {
+  evt.preventDefault();
+  sendData(
+    //удачно
+    () => {
+      classListToggler('success', 'hidden');
+      window.addEventListener('click', () => {
+        form.querySelector('.success').classList.add('hidden');
+      })
+      window.addEventListener('keydown', (evt) => {
+        if (evt.key === 'Escape' || evt.key === 'Esc'){
+          form.querySelector('.success').classList.add('hidden');
+        }
+      })
+      form.reset();
+      mainMarker._latlng.lat = 35.68950;
+      mainMarker._latlng.lng = 139.6920;
+      mainMarker.update();
+    },
+    //с ошибкой
+    (err) => {
+      if(err === 'Failed to fetch'){
+        err = 'Сервис временно недоступен. Пожалуйста попробуйте ещё раз позже.';
+      }
+      form.querySelector('.error__message').append(`. ${err}`);
+      classListToggler('error', 'hidden');
+      form.querySelector('.error__button').addEventListener('click', () => {
+        classListToggler('error', 'hidden');
+      });
+      window.addEventListener('click', () => {
+        form.querySelector('.error__message').innerText = 'Ошибка размещения объявления';
+        form.querySelector('.error').classList.add('hidden');
+      })
+      window.addEventListener('keydown', (evt) => {
+        if (evt.key === 'Escape' || evt.key === 'Esc'){
+          form.querySelector('.error__message').innerText = 'Ошибка размещения объявления';
+          form.querySelector('.error').classList.add('hidden');
+        }
+      });
+
+    },
+    new FormData(evt.target),
+  );
+});
+
+adFormReset.addEventListener('click', (evt) =>{
+  evt.preventDefault();
+  form.reset();
+  mainMarker._latlng.lat = 35.68950;
+  mainMarker._latlng.lng = 139.6920;
+  mainMarker.update();
 })
