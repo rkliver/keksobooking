@@ -1,5 +1,6 @@
 import {sendData} from './create-fetch.js';
 import {mainMarker} from './map.js';
+import {mapFilter} from './map.js';
 
 const form = document.querySelector('.ad-form');
 const title = form.querySelector('#title');
@@ -24,15 +25,18 @@ form.querySelector('.error').classList.add('hidden');
 form.appendChild(successMessage);
 form.querySelector('.success').classList.add('hidden');
 
+//условия валидации взяты из ТЗ:
 const MIN_TITLE_LENGTH = 30;
 const MAX_TITLE_LENGTH = 100;
 const MAX_PRICE = 1000000;
+
 //Добавляем тип жилья "Отель"
 const hotelOption = type.options[0].cloneNode(true);
 hotelOption.removeAttribute('selected');
 hotelOption.innerText = 'Отель';
 hotelOption.value = 'hotel';
 type.insertBefore(hotelOption, type.options[2]);
+
 //Валидируем поле "Заголовок" формы
 title.addEventListener('input', () => {
   const valueLength = title.value.length;
@@ -45,6 +49,7 @@ title.addEventListener('input', () => {
   }
   title.reportValidity();
 });
+
 //Валидируем поле "Цена за ночь" в форме
 price.addEventListener('input', () => {
   const priceValue = price.value
@@ -60,6 +65,7 @@ formAvatar.addEventListener('input', () => {
   formAvatarPreview.src = formAvatar.value;
 });
 
+//Устанавливаем зависимость полей количества комнат и количества гостей
 capacity.addEventListener('input', () => {
   const roomInputNumber = roomNumber.selectedOptions[0].value;
   const capacityNumber = capacity.value;
@@ -73,14 +79,15 @@ capacity.addEventListener('input', () => {
     capacity.setCustomValidity('');
   }
   capacity.reportValidity();
-})
+});
 
 //Меняет минимальное значение и placeholder поля price
 const minPriceChanger = (min) =>{
   price.placeholder = min;
   price.setAttribute('min', min);
   return price;
-}
+};
+
 //Меняет время въезда
 const timeInChanger = (time) =>{
   for (let i = 0; i < timeIn.options.length; i ++) {
@@ -89,7 +96,8 @@ const timeInChanger = (time) =>{
     }
   }
   return timeIn
-}
+};
+
 //Меняет время выезда
 const timeOutChanger = (time) =>{
   for (let i = 0; i < timeOut.options.length; i ++) {
@@ -98,7 +106,8 @@ const timeOutChanger = (time) =>{
     }
   }
   return timeOut
-}
+};
+
 //Вызывает minPriceChanger и передает в него минимум стоимости, соответсвующий типу жилья
 type.addEventListener('input', () => {
   const typeSelected = type.selectedOptions[0].value;
@@ -122,7 +131,8 @@ type.addEventListener('input', () => {
   }
   return minPriceChanger(min);
 },
-)
+);
+
 //При изменении пользователем времени заезда вызывает timeOutChanger и передает в него соответсвущее значение и наоборот
 timeIn.addEventListener('input', () => {
   let time = timeIn.selectedOptions[0].value;
@@ -137,6 +147,7 @@ const classListToggler = (selector, className) =>{
   form.querySelector(`.${selector}`).classList.toggle(`${className}`);
 };
 
+//обрабатыеваем полученные от пользователя данные и отправляем на сервер
 form.addEventListener('submit', (evt) => {
   evt.preventDefault();
   sendData(
@@ -152,6 +163,7 @@ form.addEventListener('submit', (evt) => {
         }
       })
       form.reset();
+      mapFilter.reset();
       mainMarker._latlng.lat = 35.68950;
       mainMarker._latlng.lng = 139.6920;
       mainMarker.update();
@@ -182,6 +194,7 @@ form.addEventListener('submit', (evt) => {
   );
 });
 
+//возвращаем метку и значения адреса в начльное положение при нажатии кнокпи очистить
 adFormReset.addEventListener('click', (evt) =>{
   evt.preventDefault();
   form.reset();

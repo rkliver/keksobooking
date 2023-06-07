@@ -1,3 +1,4 @@
+// AJAX запрос данных об объявлениях неподалеку
 const getData = (onSuccess, onError) => () => {
   return fetch('https://26.javascript.pages.academy/keksobooking/data')
     .then(response => {
@@ -13,7 +14,7 @@ const getData = (onSuccess, onError) => () => {
       onError();
     });
 };
-
+// отправляет данные объявления пользователя из формы на сервер
 const sendData = (onSuccess, onFail, body) => {
   fetch('https://26.javascript.pages.academy/keksobooking',
     {
@@ -24,6 +25,7 @@ const sendData = (onSuccess, onFail, body) => {
     .then((response) => {
       if (response.ok) {
         onSuccess();
+        // Вы можете раскомментировать соедующие строки, чтобы увидеть отправленные данные:
         // for (let [key, value] of body) {
         //   console.log(`${key} - ${value}`)
         // }

@@ -1,4 +1,5 @@
-//Функция, возвращающая случайное целое число из переданного диапазона включительно. //
+/* следующие функции требовались в ходе разработки по учебному заданию, но впоследствии были убраны из кода:
+Функция, возвращающая случайное целое число из переданного диапазона включительно. //
 const getRandomInt = (min,max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
@@ -11,7 +12,7 @@ const getRandomInt = (min,max) => {
   return Math.floor(Math.random() * (max - min + 1) + min);
 };
 
-//Функция, возвращающая случайное число с плавающей точкой из переданного диапазона включительно.//
+Функция, возвращающая случайное число с плавающей точкой из переданного диапазона включительно.//
 const getRandonFloat = (min, max, decimals) => {
   if (min < 0 || max < 0){
     return -1;
@@ -23,10 +24,11 @@ const getRandonFloat = (min, max, decimals) => {
   return Number(i);
 };
 
-//Функция, возвращающая случайный элемент массива.//
+Функция, возвращающая случайный элемент массива.//
 const getRandomArrayElement = (elements) => {
   return elements[getRandomInt(0, elements.length - 1)];
 };
+*/
 
 const showAlert = (message) => {
   const alertContainer = document.createElement('div');
@@ -49,4 +51,4 @@ const showAlert = (message) => {
   }, 10000);
 }
 
-export {getRandomInt, getRandonFloat, getRandomArrayElement, showAlert}
+export {showAlert}

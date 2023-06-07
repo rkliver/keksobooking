@@ -1,15 +1,15 @@
 import {getData} from './create-fetch.js';
 import {createPopup} from './create-popup.js';
 import {showAlert} from './util.js';
+import {filterAds} from './map-filter.js';
 
 /* global L:readonly */
-
-const MAX_MARKERS_COUNT = 10;
+/* global _:readonly */
 
 const adForm = document.querySelector('.ad-form');
 const mapFilter = document.querySelector('.map__filters');
 
-//Функция переводит страницу в нактивное состояние
+//Функция переводит страницу в нактивное состояние, если передать в нее что-то кроме true
 const inactivateState = (boolean) => {
   if (boolean !== true) {
     adForm.classList.add('ad-form--disabled');
@@ -23,12 +23,11 @@ const inactivateState = (boolean) => {
   }
 }
 
-let mapIsInit = false;
-
 //Отрисовывем карту
 const map = L.map('map-canvas')
   .on('load', () =>{
-    mapIsInit = true;
+    //при успешной загрузке карты активируем форму и фильтр карты
+    inactivateState(true);
   })
   .setView({
     lat: 35.6895,
@@ -41,9 +40,6 @@ L.tileLayer(
     attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
   },
 ).addTo(map);
-
-//Активируем форму
-inactivateState(mapIsInit);
 
 //Добавляем главную метку
 const mainMarkerIcon = L.icon({
@@ -72,26 +68,42 @@ mainMarker.on('moveend', (evt) => {
 });
 
 // Добавляем метки "похожих объявлений"
-const markerBuilder = getData((AdsNearby) => {
-  const popUpContent = createPopup(AdsNearby);
+const markerBuilder = _.debounce(getData((adsNearby) => {
+  let filtredAds = filterAds(adsNearby);
   const nearbyMarkerIcon = L.icon({
     iconUrl: '/leaflet/img/pin.svg',
     iconSize: [40, 40],
     iconAnchor: [52, 52],
   });
-  for (let i = 0; i < MAX_MARKERS_COUNT; i++ ){
-    const marker = L.marker({
-      lat: AdsNearby[i].location.lat,
-      lng: AdsNearby[i].location.lng,
-    },
+  filtredAds.forEach((ad) => {
     {
-      icon: nearbyMarkerIcon,
-    });
-    marker
-      .addTo(map)
-      .bindPopup(popUpContent.children[i]);
-  }
-}, () => showAlert('Произошла ошибка при загрузке данных с сервера'));
+      const marker = L.marker({
+        lat: ad.location.lat,
+        lng: ad.location.lng,
+      },
+      {
+        icon: nearbyMarkerIcon,
+      });
+      marker
+        .addTo(map)
+        .bindPopup(createPopup(ad));
 
-markerBuilder();
-export {mainMarker};
+      mapFilter.addEventListener('change', () =>{
+        marker.remove();
+      })
+    }
+
+  })
+}, () => showAlert('Произошла ошибка при загрузке данных с сервера')), 500)
+
+//отрисовывваем метки если все успешно загрузилось
+window.addEventListener('load', () => {
+  markerBuilder();
+})
+//меняем метки согласно значений фильтра
+mapFilter.addEventListener('change', () =>{
+  markerBuilder();
+})
+
+
+export {mainMarker, mapFilter};
