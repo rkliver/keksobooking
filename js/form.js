@@ -1,12 +1,11 @@
 import {sendData} from './create-fetch.js';
 import {mainMarker} from './map.js';
-import {mapFilter} from './map.js';
+import {mapFilter, markerBuilder, map} from './map.js';
+import {avatarPreview, photoPreview} from './file.js'
 
 const form = document.querySelector('.ad-form');
 const title = form.querySelector('#title');
 const type = form.querySelector('#type');
-const formAvatar = form.querySelector('#avatar');
-const formAvatarPreview = form.querySelector('.ad-form-header__preview').querySelector('img');
 const price = form.querySelector('#price');
 const timeIn = form.querySelector('#timein');
 const timeOut = form.querySelector('#timeout');
@@ -59,10 +58,6 @@ price.addEventListener('input', () => {
     price.setCustomValidity('');
   }
   price.reportValidity();
-});
-
-formAvatar.addEventListener('input', () => {
-  formAvatarPreview.src = formAvatar.value;
 });
 
 //Устанавливаем зависимость полей количества комнат и количества гостей
@@ -163,10 +158,17 @@ form.addEventListener('submit', (evt) => {
         }
       })
       form.reset();
+      avatarPreview.src = 'img/muffin-grey.svg';
+      photoPreview.textContent = '';
       mapFilter.reset();
       mainMarker._latlng.lat = 35.68950;
       mainMarker._latlng.lng = 139.6920;
       mainMarker.update();
+      map.setView({
+        lat: 35.6895,
+        lng: 139.692,
+      }, 14);
+      markerBuilder();
     },
     //с ошибкой
     (err) => {
@@ -198,7 +200,15 @@ form.addEventListener('submit', (evt) => {
 adFormReset.addEventListener('click', (evt) =>{
   evt.preventDefault();
   form.reset();
+  mapFilter.reset();
+  avatarPreview.src = 'img/muffin-grey.svg';
+  photoPreview.textContent = '';
   mainMarker._latlng.lat = 35.68950;
   mainMarker._latlng.lng = 139.6920;
   mainMarker.update();
+  map.setView({
+    lat: 35.6895,
+    lng: 139.692,
+  }, 14);
+  markerBuilder();
 })

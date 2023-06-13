@@ -106,4 +106,4 @@ mapFilter.addEventListener('change', () =>{
 })
 
 
-export {mainMarker, mapFilter};
+export {map, mainMarker, mapFilter, markerBuilder};
