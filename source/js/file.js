@@ -6,6 +6,7 @@ const photoInput = document.querySelector('#images');
 const photoPreview = document.querySelector('.ad-form__photo');
 photoPreview.style.columns = '2';
 
+//Обрабатываем файл аватара загруженный пользователем
 avatarInput.addEventListener('change', () => {
 
   const avatarFile = avatarInput.files[0];
@@ -25,6 +26,7 @@ avatarInput.addEventListener('change', () => {
   }
 });
 
+//Обрабатываем файлы фото жилья загруженные пользователем
 photoInput.addEventListener('change', () => {
 
   const photoFile = photoInput.files[0];
